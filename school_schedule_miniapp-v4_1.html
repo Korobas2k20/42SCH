@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Школьный Компас</title>
+    <style>
+        :root {
+            --bg-color: #0b1120;
+             --card-bg: #1e293b;
+            --card-elevated: #273549;
+            --primary: #38bdf8;
+             --primary-text: #0f172a;
+             --lesson-color: #38bdf8;
+            --lesson-bg: rgba(56, 189, 248, 0.14);
+             --club-color: #2dd4bf;
+            --club-bg: rgba(45, 212, 191, 0.14);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+             --border-color: #334155;
+            --danger: #f87171;
+            --danger-bg: rgba(248, 113, 113, 0.15);
+            --warning-bg: rgba(251, 191, 36, 0.15);
+             --warning-border: rgba(251, 191, 36, 0.4);
+            --warning-text: #fde68a;
+            --gap-bg: rgba(148, 163, 184, 0.08);
+            --color-scheme: dark;
+            }
+
+    [data-theme="light"] {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --card-elevated: #f8fafc;
+            --primary: #2563eb;
+            --primary-text: #ffffff;
+            --lesson-color: #3b82f6;
+            --lesson-bg: #eff6ff;
+            --club-color: #10b981;
+            --club-bg: #ecfdf5;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+            --gap-bg: #f1f5f9;
+            --color-scheme: light;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #020617;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            transition: background-color 0.25s; }
+
+        [data-theme="light"] body {
+            background-color: #e2e8f0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 460px;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.35);
+            position: relative;
+            transition: background-color 0.25s, color 0.25s; }
+
+        header {
+            background: var(--card-bg);
+            padding: 14px 16px 12px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .app-title {
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+    .btn-demo {
+            background: linear-gradient(135deg, #6366f1, #38bdf8);
+            color: #ffffff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+            transition: transform 0.15s;
+        }
+        .btn-demo:active { transform: scale(0.95); }
+
+        .theme-toggle {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .badge-max {
+            font-size: 10px;
+            background: var(--primary);
+            color: var(--primary-text);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .profiles-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scrollbar-width: none;
+        }
+        .profiles-bar::-webkit-scrollbar { display: none; }
+
+        .profile-chip {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-chip.active {
+            background: var(--primary);
+            color: var(--primary-text);
+            border-color: var(--primary);
+        }
+
+        .profile-chip.add-btn {
+            background: transparent;
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+        }
+
+        /* Карточка профиля + мини-аналитика */
+        .child-info-banner {
+            background: var(--card-bg);
+            margin: 12px 16px 0;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+            .child-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .child-info-text strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+         .child-info-text span {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .stats-row {
+             display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .stat-pill {
+            background: var(--bg-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+               color: var(--text-main);
+        }
+
+        .btn-icon {
+            background: var(--bg-color);
+             border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+             display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* Переключатель режима День / Неделя и вкладки */
+        .view-controls {
+            display: flex;
+             justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px 6px;
+        }
+
+        .mode-switch {
+            display: inline-flex;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+               padding: 2px;
+        }
+
+        .mode-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+             font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+             color: var(--primary-text);
+        }
+
+        .legend {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+           .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.lesson { background: var(--lesson-color); }
+        .dot.club { background: var(--club-color); }
+
+        .days-tabs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            padding: 6px 16px 10px;
+        }
+
+        .day-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 10px;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+             .day-tab.active {
+            background: var(--primary);
+            color: var(--primary-text);
+            border-color: var(--primary);
+        }
+
+        .day-tab .conflict-dot {
+            position: absolute;
+            top: 3px;
+            right: 4px;
+                width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--danger);
+        }
+
+        main {
+            flex: 1;
+            padding: 4px 16px 90px;
+        }
+
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+
+        .event-card {
+            background: var(--card-bg);
+              border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid #ccc;
+            display: flex;
+               justify-content: space-between;
+             align-items: flex-start;
+               transition: transform 0.15s;
+        }
+
+        .event-card.lesson {
+              border-left-color: var(--lesson-color);
+            background: linear-gradient(90deg, var(--lesson-bg) 0%, var(--card-bg) 35%);
+        }
+
+        .event-card.club {
+            border-left-color: var(--club-color);
+            background: linear-gradient(90deg, var(--club-bg) 0%, var(--card-bg) 35%);
+        }
+
+        .event-card.has-conflict {
+              border-color: var(--danger);
+            background: linear-gradient(90deg, var(--danger-bg) 0%, var(--card-bg) 45%);
+        }
+
+        .event-time {
+            font-size: 12px;
+              font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+              flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .event-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+              text-transform: uppercase;
+            font-weight: 700;
+        }
+        .lesson .event-tag { background: var(--lesson-bg); color: var(--lesson-color); border: 1px solid rgba(56,189,248,0.3); }
+          .club .event-tag { background: var(--club-bg); color: var(--club-color); border: 1px solid rgba(45,212,191,0.3); }
+
+        .conflict-badge {
+            font-size: 10px;
+              padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--danger-bg);
+              color: var(--danger);
+            font-weight: 700;
+              border: 1px solid var(--danger);
+        }
+
+        .event-title {
+            font-size: 15px;
+              font-weight: 600;
+               margin-bottom: 4px;
+        }
+
+        .event-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+             flex-direction: column;
+            gap: 2px;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px 7px;
+            font-size: 12px;
+        }
+        .action-btn:hover { color: var(--text-main); }
+        .action-btn.delete:hover { color: var(--danger); border-color: var(--danger); }
+
+        /* Окно (перерыв между занятиями) */
+        .gap-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--gap-bg);
+            border-radius: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Режим обзора всей недели */
+        .week-day-block {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .week-day-header {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--primary);
+        }
+
+        .week-mini-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            border-left: 3px solid transparent;
+            background: var(--bg-color);
+        }
+        .week-mini-item.lesson { border-left-color: var(--lesson-color); }
+        .week-mini-item.club { border-left-color: var(--club-color); }
+        .week-mini-item.has-conflict { border-left-color: var(--danger); color: var(--danger); }
+
+        .empty-state {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .alert-box {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            color: var(--warning-text);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 460px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 10px 16px;
+            display: flex;
+            gap: 10px;
+            z-index: 15;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+        .btn:active { opacity: 0.85; }
+        .btn-club { background: var(--club-color); color: #042f2e; }
+        .btn-lesson { background: var(--lesson-color); color: #082f49; }
+
+        [data-theme="light"] .btn-club,
+        [data-theme="light"] .btn-lesson { color: #ffffff; }
+
+        /* Тост-уведомление MAX Bridge */
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #0f172a;
+            color: #f8fafc;
+            border: 1px solid var(--primary);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 200;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 100;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--card-bg);
+            color: var(--text-main);
+            width: 100%;
+            max-width: 460px;
+            border-radius: 20px 20px 0 0;
+            border-top: 1px solid var(--border-color);
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 { font-size: 17px; }
+        .close-modal {
+            background: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-color);
+            color: var(--text-main);
+            color-scheme: var(--color-scheme);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .loader-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="app-container">
+    <header>
+        <div class="app-title">
+            <span>Расписание ребёнка</span>
+            <div class="header-controls">
+                <button class="btn-demo" onclick="loadDemoData()" title="Загрузить тестовую семью с двумя детьми">✨ Демо</button>
+                <button class="theme-toggle" id="themeToggle" title="Сменить тему" onclick="toggleTheme()">☀️</button>
+                <span class="badge-max">MAX Mini App</span>
+            </div>
+        </div>
+        <div class="profiles-bar" id="profilesBar"></div>
+    </header>
+
+    <div id="childBannerArea"></div>
+
+    <div class="view-controls" id="viewControls" style="display: none;">
+        <div class="mode-switch">
+            <button class="mode-btn active" id="modeDayBtn" onclick="setViewMode('day')">День</button>
+            <button class="mode-btn" id="modeWeekBtn" onclick="setViewMode('week')">Неделя</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="dot lesson"></span> Уроки</div>
+            <div class="legend-item"><span class="dot club"></span> Кружки</div>
+        </div>
+    </div>
+
+    <div class="days-tabs" id="daysTabs"></div>
+
+    <main id="mainContent"></main>
+
+    <div class="bottom-bar" id="bottomBar" style="display: none;">
+        <button class="btn btn-lesson" onclick="openEventModal('lesson')">+ Урок</button>
+        <button class="btn btn-club" onclick="openEventModal('club')">+ Кружок / Секция</button>
+    </div>
+</div>
+
+<!-- Модальное окно создания профиля -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Профиль ребёнка</h3>
+            <button class="close-modal" onclick="closeModals()">✕</button>
+        </div>
+        <div id="profileFormBody">
+            <div class="form-group">
+                <label>Имя ребёнка *</label>
+                <input type="text" id="childName" class="form-control" placeholder="Например: Артём">
+            </div>
+            <div class="form-group">
+                <label>Город *</label>
+                <input type="text" id="childCity" class="form-control" value="Нижневартовск" list="citiesList">
+                <datalist id="citiesList">
+                    <option value="Нижневартовск">
+                    <option value="Москва">
+                    <option value="Санкт-Петербург">
+                    <option value="Екатеринбург">
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label>Школа (выберите или введите название) *</label>
+                <input type="text" id="childSchool" class="form-control" placeholder="Начните вводить..." list="schoolsList">
+                <datalist id="schoolsList">
+                    <option value="Лицей №1 (Автозагрузка доступна)">
+                    <option value="Гимназия №2 (Автозагрузка доступна)">
+                    <option value="МБОУ СШ №14">
+                    <option value="Школа №42">
+                </datalist>
+                <div class="hint">💡 Выберите <b>Лицей №1</b> или <b>Гимназия №2</b> для автопарсинга, либо любую другую для проверки ручного режима.</div>
+            </div>
+            <div class="form-group">
+                <label>Класс *</label>
+                <input type="text" id="childGrade" class="form-control" placeholder="Например: 5А" list="gradesList">
+                <datalist id="gradesList">
+                    <option value="5А">
+                    <option value="7Б">
+                    <option value="9В">
+                </datalist>
+            </div>
+            <button class="btn btn-lesson" style="width: 100%; margin-top: 8px;" onclick="saveProfile()">Сохранить и загрузить уроки</button>
+        </div>
+        <div id="parsingLoader" class="loader-box" style="display: none;">
+            <div class="spinner"></div>
+            <p style="font-weight: 600; font-size: 14px;">Подключаемся к сайту школы...</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Парсинг HTML-таблицы расписания</p>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно добавления/редактирования занятия -->
+<div class="modal-overlay" id="eventModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="eventModalTitle">Добавить занятие</h3>
+            <button class="close-modal" onclick="closeModals()">✕</button>
+        </div>
+        <input type="hidden" id="editEventId">
+        <input type="hidden" id="eventType">
+
+        <div class="form-group">
+            <label id="eventTitleLabel">Название *</label>
+            <input type="text" id="eventTitle" class="form-control" placeholder="Например: Футбол / Математика">
+        </div>
+
+        <div class="form-group">
+            <label>День недели *</label>
+            <select id="eventDay" class="form-control">
+                <option value="0">Понедельник</option>
+                <option value="1">Вторник</option>
+                <option value="2">Среда</option>
+                <option value="3">Четверг</option>
+                <option value="4">Пятница</option>
+                <option value="5">Суббота</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Начало *</label>
+                <input type="time" id="eventStart" class="form-control" value="15:00">
+            </div>
+            <div class="form-group">
+                <label>Окончание *</label>
+                <input type="time" id="eventEnd" class="form-control" value="16:30">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="eventLocationLabel">Место проведения (адрес / кабинет)</label>
+            <input type="text" id="eventLocation" class="form-control" placeholder="Например: СК Олимпия, зал 2">
+        </div>
+
+        <div class="form-group" id="contactGroup">
+            <label>Контакт тренера / педагога (опционально)</label>
+            <input type="text" id="eventContact" class="form-control" placeholder="+7 (999) 123-45-67, Иван Петрович">
+        </div>
+
+        <button class="btn btn-club" id="saveEventBtn" style="width: 100%; margin-top: 8px;" onclick="saveEvent()">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const FULL_DAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+
+    const MOCK_SCHOOL_PARSING_DB = {
+        "Лицей №1": [
+            { day: 0, start: "08:30", end: "09:15", title: "Математика", location: "Каб. 304" },
+            { day: 0, start: "09:25", end: "10:10", title: "Русский язык", location: "Каб. 210" },
+            { day: 0, start: "10:30", end: "11:15", title: "История", location: "Каб. 401" },
+            { day: 0, start: "11:30", end: "12:15", title: "Физкультура", location: "Спортзал" },
+            { day: 1, start: "08:30", end: "09:15", title: "Английский язык", location: "Каб. 105" },
+            { day: 1, start: "09:25", end: "10:10", title: "Литература", location: "Каб. 210" },
+            { day: 1, start: "10:30", end: "11:15", title: "Биология", location: "Каб. 312" },
+            { day: 2, start: "08:30", end: "09:15", title: "Математика", location: "Каб. 304" },
+            { day: 2, start: "09:25", end: "10:10", title: "Информатика", location: "Каб. 408" },
+            { day: 2, start: "10:30", end: "11:15", title: "География", location: "Каб. 315" },
+            { day: 3, start: "08:30", end: "09:15", title: "Русский язык", location: "Каб. 210" },
+            { day: 3, start: "09:25", end: "10:10", title: "Математика", location: "Каб. 304" },
+            { day: 3, start: "10:30", end: "11:15", title: "ИЗО", location: "Каб. 112" },
+            { day: 4, start: "08:30", end: "09:15", title: "Литература", location: "Каб. 210" },
+            { day: 4, start: "09:25", end: "10:10", title: "Английский язык", location: "Каб. 105" },
+            { day: 4, start: "10:30", end: "11:15", title: "Технология", location: "Мастерская" }
+        ],
+        "Гимназия №2": [
+            { day: 0, start: "08:00", end: "08:45", title: "Алгебра", location: "Каб. 201" },
+            { day: 0, start: "08:55", end: "09:40", title: "Физика", location: "Каб. 305" },
+            { day: 0, start: "10:00", end: "10:45", title: "Русский язык", location: "Каб. 108" },
+            { day: 1, start: "08:00", end: "08:45", title: "Геометрия", location: "Каб. 201" },
+            { day: 1, start: "08:55", end: "09:40", title: "Немецкий язык", location: "Каб. 402" },
+            { day: 2, start: "08:00", end: "08:45", title: "Химия", location: "Каб. 309" },
+            { day: 3, start: "08:00", end: "08:45", title: "Обществознание", location: "Каб. 214" },
+            { day: 4, start: "08:00", end: "08:45", title: "Физкультура", location: "Бассейн" }
+        ]
+    };
+
+    let state = JSON.parse(localStorage.getItem('kidScheduleAppV4')) || {
+        children: [],
+        activeChildId: null,
+        activeDay: 0,
+        viewMode: 'day',
+        theme: 'dark'
+    };
+
+    function saveState() {
+        localStorage.setItem('kidScheduleAppV4', JSON.stringify(state));
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    // --- Управление темой ---
+    function applyTheme() {
+        const isLight = state.theme === 'light';
+        document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+        document.getElementById('themeToggle').textContent = isLight ? '🌙' : '☀️';
+    }
+
+    function toggleTheme() {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        applyTheme();
+        saveState();
+    }
+
+    // --- Быстрый демо-пресет для защиты ---
+    function loadDemoData() {
+        const demoChildren = [
+            {
+                id: 'demo_artem',
+                name: 'Артём',
+                city: 'Нижневартовск',
+                school: 'Лицей №1',
+                grade: '5А',
+                autoLoadFailed: false,
+                events: [
+                    ...MOCK_SCHOOL_PARSING_DB["Лицей №1"].map((item, i) => ({
+                        id: 'd_artem_l_' + i,
+                        type: 'lesson',
+                        day: item.day,
+                        start: item.start,
+                        end: item.end,
+                        title: item.title,
+                        location: item.location,
+                        contact: ''
+                    })),
+                    { id: 'd_c1', type: 'club', day: 0, start: '15:30', end: '17:00', title: 'Футбол (ДЮСШ)', location: 'СК Олимпия, поле 1', contact: '+7 (912) 555-12-34, Алексей Иванович' },
+                    { id: 'd_c2', type: 'club', day: 1, start: '16:00', end: '17:30', title: 'Робототехника', location: 'Кванториум, ауд. 204', contact: '+7 (912) 444-98-76, Елена Сергеевна' },
+                    { id: 'd_c3', type: 'club', day: 2, start: '15:30', end: '17:00', title: 'Футбол (ДЮСШ)', location: 'СК Олимпия, поле 1', contact: '+7 (912) 555-12-34, Алексей Иванович' },
+                    { id: 'd_c4', type: 'club', day: 3, start: '17:00', end: '18:30', title: 'Английский клуб', location: 'ул. Ленина, 15', contact: '@english_club_nv' }
+                ]
+            },
+            {
+                id: 'demo_sofia',
+                name: 'София',
+                city: 'Нижневартовск',
+                school: 'МБОУ СШ №14',
+                grade: '2Б',
+                autoLoadFailed: true,
+                events: [
+                    { id: 'd_sof_1', type: 'lesson', day: 0, start: '08:30', end: '09:10', title: 'Окружающий мир', location: 'Каб. 102', contact: '' },
+                    { id: 'd_sof_2', type: 'lesson', day: 0, start: '09:20', end: '10:00', title: 'Математика', location: 'Каб. 102', contact: '' },
+                    { id: 'd_sof_3', type: 'club', day: 0, start: '09:45', end: '11:00', title: 'Художественная гимнастика', location: 'ФОК Нефтяник', contact: '+7 (904) 888-11-22, Мария' }
+                ]
+            }
+        ];
+
+        state.children = demoChildren;
+        state.activeChildId = 'demo_artem';
+        state.activeDay = 0;
+        state.viewMode = 'day';
+        saveState();
+        renderAll();
+        showToast('✨ Загружен демо-профиль семьи (2 ребёнка)');
+    }
+
+    // --- Вспомогательные функции времени и детектор конфликтов ---
+    function timeToMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function formatDuration(mins) {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        if (h === 0) return `${m} мин`;
+        if (m === 0) return `${h} ч`;
+        return `${h} ч ${m} мин`;
+    }
+
+    function getDayEventsWithConflicts(child, dayIndex) {
+        const list = child.events
+            .filter(e => e.day === dayIndex)
+            .sort((a, b) => a.start.localeCompare(b.start))
+            .map(e => ({ ...e, conflict: false }));
+
+        for (let i = 0; i < list.length; i++) {
+            const s1 = timeToMinutes(list[i].start);
+            const e1 = timeToMinutes(list[i].end);
+            for (let j = i + 1; j < list.length; j++) {
+                const s2 = timeToMinutes(list[j].start);
+                const e2 = timeToMinutes(list[j].end);
+                if (s1 < e2 && e1 > s2) {
+                    list[i].conflict = true;
+                    list[j].conflict = true;
+                }
+            }
+        }
+        return list;
+    }
+
+    function init() {
+        applyTheme();
+        const today = new Date().getDay();
+        state.activeDay = (today === 0) ? 0 : today - 1;
+        renderAll();
+    }
+
+    function setViewMode(mode) {
+        state.viewMode = mode;
+        saveState();
+        renderAll();
+    }
+
+    function renderAll() {
+        renderProfilesBar();
+        renderChildBanner();
+        renderViewControls();
+        renderDaysTabs();
+        renderSchedule();
+    }
+
+    function renderProfilesBar() {
+        const bar = document.getElementById('profilesBar');
+        bar.innerHTML = '';
+
+        state.children.forEach(child => {
+            const chip = document.createElement('div');
+            chip.className = `profile-chip ${child.id === state.activeChildId ? 'active' : ''}`;
+            chip.innerHTML = `👦 ${child.name}`;
+            chip.onclick = () => {
+                state.activeChildId = child.id;
+                saveState();
+                renderAll();
+            };
+            bar.appendChild(chip);
+        });
+
+        const addChip = document.createElement('div');
+        addChip.className = 'profile-chip add-btn';
+        addChip.innerHTML = '+ Ребёнок';
+        addChip.onclick = openProfileModal;
+        bar.appendChild(addChip);
+    }
+
+    function renderChildBanner() {
+        const area = document.getElementById('childBannerArea');
+        const bottomBar = document.getElementById('bottomBar');
+        const child = getActiveChild();
+
+        if (!child) {
+            area.innerHTML = '';
+            bottomBar.style.display = 'none';
+            return;
+        }
+
+        bottomBar.style.display = 'flex';
+
+        const lessonsCount = child.events.filter(e => e.type === 'lesson').length;
+        const clubsCount = child.events.filter(e => e.type === 'club').length;
+        const totalMins = child.events.reduce((acc, e) => acc + Math.max(0, timeToMinutes(e.end) - timeToMinutes(e.start)), 0);
+
+        area.innerHTML = `
+            <div class="child-info-banner">
+                <div class="child-top-row">
+                    <div class="child-info-text">
+                        <strong>${child.name} • ${child.grade} класс</strong>
+                        <span>г. ${child.city}, ${child.school}</span>
+                    </div>
+                    <button class="btn-icon" title="Удалить профиль" onclick="deleteActiveChild()">🗑️</button>
+                </div>
+                <div class="stats-row">
+                    <span class="stat-pill">📚 Уроков: ${lessonsCount}</span>
+                    <span class="stat-pill">⚽ Кружков: ${clubsCount}</span>
+                    <span class="stat-pill">⏱️ В неделю: ${formatDuration(totalMins)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderViewControls() {
+        const controls = document.getElementById('viewControls');
+        const child = getActiveChild();
+        if (!child) {
+            controls.style.display = 'none';
+            return;
+        }
+        controls.style.display = 'flex';
+        document.getElementById('modeDayBtn').classList.toggle('active', state.viewMode === 'day');
+        document.getElementById('modeWeekBtn').classList.toggle('active', state.viewMode === 'week');
+    }
+
+    function renderDaysTabs() {
+        const tabs = document.getElementById('daysTabs');
+        const child = getActiveChild();
+        if (!child || state.viewMode === 'week') {
+            tabs.style.display = 'none';
+            return;
+        }
+        tabs.style.display = 'grid';
+        tabs.innerHTML = '';
+
+        DAYS.forEach((dayName, index) => {
+            const events = getDayEventsWithConflicts(child, index);
+            const hasConflict = events.some(e => e.conflict);
+
+            const btn = document.createElement('div');
+            btn.className = `day-tab ${state.activeDay === index ? 'active' : ''}`;
+            btn.innerHTML = `${dayName}${hasConflict ? '<span class="conflict-dot" title="Есть накладка по времени"></span>' : ''}`;
+            btn.onclick = () => {
+                state.activeDay = index;
+                renderDaysTabs();
+                renderSchedule();
+            };
+            tabs.appendChild(btn);
+        });
+    }
+
+    function renderSchedule() {
+        const main = document.getElementById('mainContent');
+        const child = getActiveChild();
+
+        if (!child) {
+            main.innerHTML = `
+                <div class="empty-state">
+                    <p style="font-size: 34px; margin-bottom: 8px;">🎒</p>
+                    <p><strong>Единое расписание школьника</strong></p>
+                    <p style="font-size: 13px; margin: 8px 0 16px;">Создайте профиль ребёнка или нажмите «✨ Демо» вверху для мгновенного обзора.</p>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-lesson" onclick="openProfileModal()">Создать профиль</button>
+                        <button class="btn btn-club" onclick="loadDemoData()">✨ Загрузить демо</button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        if (state.viewMode === 'week') {
+            renderWeekOverview(main, child);
+            return;
+        }
+
+        let html = '';
+
+        if (child.autoLoadFailed) {
+            html += `
+                <div class="alert-box">
+                    ⚠️ <strong>К сожалению, для вашей школы автоматическая загрузка недоступна.</strong><br>
+                    Пожалуйста, введите расписание уроков вручную с помощью кнопки «+ Урок» ниже.
+                </div>
+            `;
+        }
+
+        const dayEvents = getDayEventsWithConflicts(child, state.activeDay);
+
+        if (dayEvents.length === 0) {
+            html += `
+                <div class="empty-state">
+                    <p style="font-size: 28px; margin-bottom: 6px;">📭</p>
+                    <p><strong>На ${FULL_DAYS[state.activeDay].toLowerCase()} занятий нет</strong></p>
+                    <p style="font-size: 13px; margin-top: 4px;">Добавьте школьный урок или кружок с помощью кнопок внизу.</p>
+                </div>
+            `;
+        } else {
+            html += '<div class="schedule-list">';
+            dayEvents.forEach((ev, idx) => {
+                // Показываем "Окно" между занятиями, если перерыв >= 45 минут
+                if (idx > 0) {
+                    const prevEnd = timeToMinutes(dayEvents[idx - 1].end);
+                    const currStart = timeToMinutes(ev.start);
+                    const gap = currStart - prevEnd;
+                    if (gap >= 45) {
+                        html += `
+                            <div class="gap-divider">
+                                ☕ Окно ${formatDuration(gap)} — время на обед и дорогу
+                            </div>
+                        `;
+                    }
+                }
+
+                const isLesson = ev.type === 'lesson';
+                html += `
+                    <div class="event-card ${ev.type} ${ev.conflict ? 'has-conflict' : ''}">
+                        <div>
+                            <div class="event-time">
+                                <span>🕒 ${ev.start} – ${ev.end}</span>
+                                <span class="event-tag">${isLesson ? 'Урок' : 'Кружок'}</span>
+                                ${ev.conflict ? '<span class="conflict-badge">⚠️ Накладка</span>' : ''}
+                            </div>
+                            <div class="event-title">${ev.title}</div>
+                            <div class="event-meta">
+                                ${ev.location ? `<span>📍 ${ev.location}</span>` : ''}
+                                ${ev.contact ? `<span>📞 ${ev.contact}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="event-actions">
+                            ${!isLesson ? `<button class="action-btn" title="Напомнить в чате MAX" onclick="sendMaxReminder('${ev.title}', '${ev.start}')">🔔</button>` : ''}
+                            <button class="action-btn" title="Редактировать" onclick="editEvent('${ev.id}')">✏️</button>
+                            <button class="action-btn delete" title="Удалить" onclick="deleteEvent('${ev.id}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        main.innerHTML = html;
+    }
+
+    function renderWeekOverview(container, child) {
+        let html = '';
+        FULL_DAYS.forEach((dayName, dayIdx) => {
+            const events = getDayEventsWithConflicts(child, dayIdx);
+            html += `
+                <div class="week-day-block">
+                    <div class="week-day-header" onclick="state.activeDay=${dayIdx}; setViewMode('day');" style="cursor:pointer;">
+                        <span>${dayName}</span>
+                        <span style="font-size:11px; color:var(--text-muted);">${events.length} зан. →</span>
+                    </div>
+            `;
+            if (events.length === 0) {
+                html += `<div style="font-size:12px; color:var(--text-muted);">Выходной / нет записей</div>`;
+            } else {
+                events.forEach(ev => {
+                    html += `
+                        <div class="week-mini-item ${ev.type} ${ev.conflict ? 'has-conflict' : ''}">
+                            <span><strong>${ev.start}</strong> ${ev.title}</span>
+                            <span style="color:var(--text-muted); font-size:11px;">${ev.location || ''}</span>
+                        </div>
+                    `;
+                });
+            }
+            html += `</div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function sendMaxReminder(title, time) {
+        // Имитация вызова MAX Mini App SDK Bridge
+        showToast(`🔔 Бот MAX напомнит о «${title}» за 30 мин (в ${time})`);
+    }
+
+    function getActiveChild() {
+        return state.children.find(c => c.id === state.activeChildId) || null;
+    }
+
+    function openProfileModal() {
+        document.getElementById('childName').value = '';
+        document.getElementById('childSchool').value = '';
+        document.getElementById('childGrade').value = '';
+        document.getElementById('profileFormBody').style.display = 'block';
+        document.getElementById('parsingLoader').style.display = 'none';
+        document.getElementById('profileModal').classList.add('open');
+    }
+
+    function saveProfile() {
+        const name = document.getElementById('childName').value.trim();
+        const city = document.getElementById('childCity').value.trim();
+        const school = document.getElementById('childSchool').value.trim();
+        const grade = document.getElementById('childGrade').value.trim();
+
+        if (!name || !city || !school || !grade) {
+            alert('Пожалуйста, заполните все обязательные поля');
+            return;
+        }
+
+        document.getElementById('profileFormBody').style.display = 'none';
+        document.getElementById('parsingLoader').style.display = 'block';
+
+        setTimeout(() => {
+            const matchedKey = Object.keys(MOCK_SCHOOL_PARSING_DB).find(key =>
+                school.toLowerCase().includes(key.toLowerCase())
+            );
+
+            let importedEvents = [];
+            let autoLoadFailed = true;
+
+            if (matchedKey) {
+                autoLoadFailed = false;
+                importedEvents = MOCK_SCHOOL_PARSING_DB[matchedKey].map((item, idx) => ({
+                    id: 'auto_' + Date.now() + '_' + idx,
+                    type: 'lesson',
+                    day: item.day,
+                    start: item.start,
+                    end: item.end,
+                    title: item.title,
+                    location: item.location,
+                    contact: ''
+                }));
+            }
+
+            const newChild = {
+                id: 'child_' + Date.now(),
+                name,
+                city,
+                school: school.replace(' (Автозагрузка доступна)', ''),
+                grade,
+                autoLoadFailed,
+                events: importedEvents
+            };
+
+            state.children.push(newChild);
+            state.activeChildId = newChild.id;
+            saveState();
+
+            closeModals();
+            renderAll();
+            if (!autoLoadFailed) {
+                showToast(`✅ Загружено ${importedEvents.length} уроков с сайта школы`);
+            }
+        }, 1000);
+    }
+
+    function deleteActiveChild() {
+        const child = getActiveChild();
+        if (!child) return;
+        if (confirm(`Удалить профиль «${child.name}» и всё его расписание?`)) {
+            state.children = state.children.filter(c => c.id !== child.id);
+            state.activeChildId = state.children.length > 0 ? state.children[0].id : null;
+            saveState();
+            renderAll();
+        }
+    }
+
+    function openEventModal(type, existingEvent = null) {
+        document.getElementById('eventType').value = type;
+        document.getElementById('editEventId').value = existingEvent ? existingEvent.id : '';
+
+        const isLesson = type === 'lesson';
+        document.getElementById('eventModalTitle').textContent = existingEvent
+            ? (isLesson ? 'Редактировать урок' : 'Редактировать кружок')
+            : (isLesson ? 'Добавить школьный урок' : 'Добавить кружок / секцию');
+
+        document.getElementById('eventTitleLabel').textContent = isLesson ? 'Предмет *' : 'Название кружка / секции *';
+        document.getElementById('eventTitle').placeholder = isLesson ? 'Например: Математика' : 'Например: Футбол / Художественная школа';
+        document.getElementById('eventLocationLabel').textContent = isLesson ? 'Кабинет' : 'Место проведения (адрес или зал)';
+        document.getElementById('contactGroup').style.display = isLesson ? 'none' : 'block';
+
+        const saveBtn = document.getElementById('saveEventBtn');
+        saveBtn.className = `btn ${isLesson ? 'btn-lesson' : 'btn-club'}`;
+
+        if (existingEvent) {
+            document.getElementById('eventTitle').value = existingEvent.title;
+            document.getElementById('eventDay').value = existingEvent.day;
+            document.getElementById('eventStart').value = existingEvent.start;
+            document.getElementById('eventEnd').value = existingEvent.end;
+            document.getElementById('eventLocation').value = existingEvent.location || '';
+            document.getElementById('eventContact').value = existingEvent.contact || '';
+        } else {
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventDay').value = state.activeDay;
+            document.getElementById('eventStart').value = isLesson ? '08:30' : '16:00';
+            document.getElementById('eventEnd').value = isLesson ? '09:15' : '17:30';
+            document.getElementById('eventLocation').value = '';
+            document.getElementById('eventContact').value = '';
+        }
+
+        document.getElementById('eventModal').classList.add('open');
+    }
+
+    function saveEvent() {
+        const child = getActiveChild();
+        if (!child) return;
+
+        const id = document.getElementById('editEventId').value;
+        const type = document.getElementById('eventType').value;
+        const title = document.getElementById('eventTitle').value.trim();
+        const day = parseInt(document.getElementById('eventDay').value, 10);
+        const start = document.getElementById('eventStart').value;
+        const end = document.getElementById('eventEnd').value;
+        const location = document.getElementById('eventLocation').value.trim();
+        const contact = document.getElementById('eventContact').value.trim();
+
+        if (!title || !start || !end) {
+            alert('Заполните название и время занятия');
+            return;
+        }
+        if (timeToMinutes(end) <= timeToMinutes(start)) {
+            alert('Время окончания должно быть позже времени начала');
+            return;
+        }
+
+        if (id) {
+            const idx = child.events.findIndex(e => e.id === id);
+            if (idx !== -1) {
+                child.events[idx] = { id, type, title, day, start, end, location, contact };
+            }
+        } else {
+            child.events.push({
+                id: 'ev_' + Date.now(),
+                type,
+                title,
+                day,
+                start,
+                end,
+                location,
+                contact
+            });
+            if (type === 'lesson') {
+                child.autoLoadFailed = false;
+            }
+        }
+
+        state.activeDay = day;
+        saveState();
+        closeModals();
+        renderAll();
+    }
+
+    function editEvent(id) {
+        const child = getActiveChild();
+        if (!child) return;
+        const ev = child.events.find(e => e.id === id);
+        if (ev) openEventModal(ev.type, ev);
+    }
+
+    function deleteEvent(id) {
+        const child = getActiveChild();
+        if (!child) return;
+        child.events = child.events.filter(e => e.id !== id);
+        saveState();
+        renderAll();
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModals();
+        });
+    });
+
+    init();
+</script>
+</body>
+</html>
